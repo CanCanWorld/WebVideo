@@ -1,0 +1,145 @@
+package com.zrq.webvideo.ui
+
+import android.content.Context
+import android.content.Intent
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import com.zrq.webvideo.adapter.HomeVideoAdapter
+import com.zrq.webvideo.base.BaseFragment
+import com.zrq.webvideo.databinding.FragmentHomeBinding
+import com.zrq.webvideo.entity.VideoItem
+import org.jsoup.Jsoup
+
+class HomeFragment : BaseFragment<FragmentHomeBinding>() {
+    override fun providedViewBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHomeBinding {
+        return FragmentHomeBinding.inflate(layoutInflater, container, false)
+    }
+
+    private lateinit var mAdapter: HomeVideoAdapter
+    private val list = mutableListOf<VideoItem>()
+    private var page = 1
+    private var url = ""
+    private var keyword = ""
+
+    override fun initData() {
+        mAdapter = HomeVideoAdapter(requireContext(), list, {
+            startActivity(Intent(requireContext(), PlayerActivity::class.java).apply {
+                putExtra("title", list[it].title)
+                putExtra("path", list[it].path)
+            })
+        }, {
+            list.forEach { item ->
+                item.isPlayer = false
+            }
+            list[it].isPlayer = true
+            mAdapter.notifyDataSetChanged()
+        })
+        mBinding.apply {
+            recyclerView.adapter = mAdapter
+            refreshLayout.autoRefresh()
+        }
+    }
+
+    override fun initEvent() {
+        mBinding.apply {
+            refreshLayout.setOnRefreshListener {
+                page = 1
+                load()
+            }
+            refreshLayout.setOnLoadMoreListener {
+                page++
+                load()
+            }
+            tvSearch.setOnClickListener {
+                keyword = etSearch.text.toString()
+                if ("" == keyword) {
+                    Toast.makeText(requireContext(), "请输入关键字", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                page = 1
+                load()
+            }
+            etSearch.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    tvSearch.callOnClick()
+                    val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(requireActivity().window.decorView.windowToken, 0)
+                }
+                false
+            }
+        }
+    }
+
+    private fun load() {
+        Thread {
+            url = if (keyword != "") {
+                "https://xvideos.com/?k=$keyword&p=$page"
+            } else {
+                "https://xvideos.com/new/$page"
+            }
+            val doc = Jsoup.connect(url).get()
+            val elements = doc.getElementsByClass("thumb-block")
+            if (page == 1)
+                list.clear()
+            elements.forEach {
+                val thumbUnder = it.getElementsByClass("thumb-under")[0]
+                val titleTag = thumbUnder.getElementsByClass("title")[0].getElementsByClass("title")[0].getElementsByTag("a")[0]
+                val name = thumbUnder.getElementsByClass("name").text()
+                val title = titleTag.attr("title")
+                val path = titleTag.attr("href")
+                val cover = it.getElementsByClass("thumb-inside")[0].getElementsByClass("thumb")[0].getElementsByTag("a")[0].getElementsByTag("img")[0].attr("data-src")
+                val preview = picToVideo(cover)
+                val duration = thumbUnder.getElementsByClass("duration")[0].text()
+                list.add(VideoItem(title, path, cover, preview, name, duration))
+                Log.d(TAG, "title: $title")
+                Log.d(TAG, "path: $path")
+                Log.d(TAG, "cover: $cover")
+                Log.d(TAG, "name: $name")
+                Log.d(TAG, "preview: $preview")
+                Log.d(TAG, "duration: $duration")
+            }
+            Handler(Looper.getMainLooper()).post {
+                mAdapter.notifyDataSetChanged()
+                mBinding.refreshLayout.finishRefresh()
+                mBinding.refreshLayout.finishLoadMore()
+            }
+        }.start()
+    }
+
+
+    //https://img-cf.xvideos-cdn.com/videos/videopreview/06/69/eb/0669eb02197aaf29a77b51eb72d252bb_169-2.mp4
+    //https://img-cf.xvideos-cdn.com/videos/videopreview/06/69/eb/0669eb02197aaf29a77b51eb72d252bb-2.mp4
+    //https://img-cf.xvideos-cdn.com/videos/thumbs169/06/69/eb/0669eb02197aaf29a77b51eb72d252bb-2/0669eb02197aaf29a77b51eb72d252bb.17.jpg
+
+    //https://img-egc.xvideos-cdn.com/videos/thumbs169ll/63/12/d8/6312d87848556b57f308db846aacb6fe/6312d87848556b57f308db846aacb6fe.7.jpg
+    //https://img-egc.xvideos-cdn.com/videos/videopreview/63/12/d8/6312d87848556b57f308db846aacb6fe_169-2.mp4
+
+    //https://img-egc.xvideos-cdn.com/videos/thumbs169ll/e0/fb/38/e0fb387effe0e47b62a92605375a0fc1/e0fb387effe0e47b62a92605375a0fc1.5.jpg
+    //https://img-egc.xvideos-cdn.com/videos/videopreview/e0/fb/38/e0fb387effe0e47b62a92605375a0fc1_169.mp4
+    private fun picToVideo(cover: String): String {
+        val index = cover.lastIndexOf('/')
+        var target = cover.removeRange(index, cover.length)
+        val indexOf = target.indexOf("/thumbs")
+        val first = target.subSequence(0, indexOf)
+        val sequence = target.subSequence(indexOf + 1, target.length)
+        val last = sequence.subSequence(sequence.indexOf('/'), sequence.length)
+        target = "${first}/videopreview${last}_169.mp4"
+        return target
+
+    }
+
+
+    companion object {
+        private const val TAG = "HomeFragment"
+    }
+
+}

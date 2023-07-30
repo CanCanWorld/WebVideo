@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_bofangshu.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_danmushu.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_fanhui.xml" value="0.228" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_sousuo.xml" value="0.228" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/ic_upzhu.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/pressed_background_white.xml" value="0.228" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/shape_et_search.xml" value="0.228" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/drawable/shape_video_bg.xml" value="0.3295" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/layout/activity_main.xml" value="0.2740036231884058" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/layout/activity_player.xml" value="0.15572916666666667" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/layout/fragment_player.xml" value="0.3567708333333333" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/layout/item_home_video.xml" value="0.67" />
+        <entry key="..\:/android2/WebVideo/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.184" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
