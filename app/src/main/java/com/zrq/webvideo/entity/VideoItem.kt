@@ -1,5 +1,8 @@
 package com.zrq.webvideo.entity
 
+import androidx.annotation.Keep
+
+@Keep
 data class VideoItem(
     val title: String,
     val path: String,
