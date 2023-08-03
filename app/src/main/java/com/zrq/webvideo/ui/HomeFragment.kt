@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
 import com.zrq.webvideo.adapter.HomeVideoAdapter
 import com.zrq.webvideo.base.BaseFragment
 import com.zrq.webvideo.databinding.FragmentHomeBinding
@@ -31,11 +32,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private var keyword = ""
 
     override fun initData() {
-        mAdapter = HomeVideoAdapter(requireContext(), list, {
+        mAdapter = HomeVideoAdapter(requireContext(), list, { binding, position ->
+            val transition = "cover$position"
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), binding.ivCover, transition).toBundle()
             startActivity(Intent(requireContext(), PlayerActivity::class.java).apply {
-                putExtra("title", list[it].title)
-                putExtra("path", list[it].path)
-            })
+                putExtra("title", list[position].title)
+                putExtra("path", list[position].path)
+                putExtra("cover", list[position].cover)
+                binding.ivCover.transitionName = transition
+                putExtra("transition", transition)
+            }, options)
         }, {
             list.forEach { item ->
                 item.isPlayer = false

@@ -13,7 +13,7 @@ import xyz.doikki.videocontroller.StandardVideoController
 class HomeVideoAdapter(
     private val context: Context,
     private val list: MutableList<VideoItem>,
-    private val onItemClick: (Int) -> Unit,
+    private val onItemClick: (ItemHomeVideoBinding, Int) -> Unit,
     private val onItemLongClick: (Int) -> Unit,
 ) : RecyclerView.Adapter<VH<ItemHomeVideoBinding>>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH<ItemHomeVideoBinding> {
@@ -45,7 +45,7 @@ class HomeVideoAdapter(
             }
 
             root.setOnClickListener {
-                onItemClick(position)
+                onItemClick(this ,position)
             }
             root.setOnLongClickListener {
                 onItemLongClick(position)
