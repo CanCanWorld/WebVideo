@@ -5,23 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.PlayerActivity">
+    tools:context=".ui.player.PlayerActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="220dp">
 
-
-        <xyz.doikki.videoplayer.player.VideoView
+        <com.zrq.webvideo.view.MyVideoView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+            android:layout_height="match_parent"/>
 
-        <ImageView
-            android:id="@+id/ivCover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <LinearLayout

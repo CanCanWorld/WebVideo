@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.zrq.webvideo.ui.HomeFragment"
+        android:name="com.zrq.webvideo.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/playerFragment"
-        android:name="com.zrq.webvideo.ui.PlayerFragment"
+        android:name="com.zrq.webvideo.ui.player.PlayerFragment"
         android:label="fragment_player"
         tools:layout="@layout/fragment_player" />
 </navigation>

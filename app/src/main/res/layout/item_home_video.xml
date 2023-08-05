@@ -23,12 +23,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivCover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -42,9 +36,9 @@
                     <TextView
                         android:id="@+id/tvDuration"
                         android:layout_width="wrap_content"
-                        android:layout_marginTop="0.5dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
+                        android:layout_marginTop="0.5dp"
                         android:text="100"
                         android:textColor="@color/white"
                         android:textSize="9.5sp"
@@ -52,12 +46,16 @@
                 </RelativeLayout>
             </RelativeLayout>
 
-            <xyz.doikki.videoplayer.player.VideoView
-                android:id="@+id/videoView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
+                android:layout_height="wrap_content">
 
+                <com.zrq.webvideo.view.MyVideoView
+                    android:id="@+id/videoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout
@@ -105,8 +103,7 @@
                     android:id="@+id/iv_setting"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_baseline_more_vert_24"
-                    app:tint="@color/_grey" />
+                    android:src="@drawable/ic_baseline_more_vert_24" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

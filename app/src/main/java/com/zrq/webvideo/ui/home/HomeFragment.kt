@@ -1,4 +1,4 @@
-package com.zrq.webvideo.ui
+package com.zrq.webvideo.ui.home
 
 import android.content.Context
 import android.content.Intent
@@ -15,6 +15,7 @@ import com.zrq.webvideo.adapter.HomeVideoAdapter
 import com.zrq.webvideo.base.BaseFragment
 import com.zrq.webvideo.databinding.FragmentHomeBinding
 import com.zrq.webvideo.entity.VideoItem
+import com.zrq.webvideo.ui.player.PlayerActivity
 import org.jsoup.Jsoup
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
@@ -34,12 +35,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun initData() {
         mAdapter = HomeVideoAdapter(requireContext(), list, { binding, position ->
             val transition = "cover$position"
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), binding.ivCover, transition).toBundle()
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), binding.videoView, transition).toBundle()
             startActivity(Intent(requireContext(), PlayerActivity::class.java).apply {
                 putExtra("title", list[position].title)
                 putExtra("path", list[position].path)
                 putExtra("cover", list[position].cover)
-                binding.ivCover.transitionName = transition
+                binding.videoView.transitionName = transition
                 putExtra("transition", transition)
             }, options)
         }, {
@@ -49,14 +50,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             list[it].isPlayer = true
             mAdapter.notifyDataSetChanged()
         })
-        mBinding.apply {
+        binding.apply {
             recyclerView.adapter = mAdapter
             refreshLayout.autoRefresh()
         }
     }
 
     override fun initEvent() {
-        mBinding.apply {
+        binding.apply {
             refreshLayout.setOnRefreshListener {
                 page = 1
                 load()
@@ -115,8 +116,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             }
             Handler(Looper.getMainLooper()).post {
                 mAdapter.notifyDataSetChanged()
-                mBinding.refreshLayout.finishRefresh()
-                mBinding.refreshLayout.finishLoadMore()
+                binding.refreshLayout.finishRefresh()
+                binding.refreshLayout.finishLoadMore()
             }
         }.start()
     }

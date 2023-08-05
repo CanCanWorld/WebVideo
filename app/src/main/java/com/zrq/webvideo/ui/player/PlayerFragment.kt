@@ -1,4 +1,4 @@
-package com.zrq.webvideo.ui
+package com.zrq.webvideo.ui.player
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

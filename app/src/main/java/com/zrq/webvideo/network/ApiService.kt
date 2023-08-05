@@ -12,8 +12,8 @@ import retrofit2.http.POST
 interface ApiService {
 
     @FormUrlEncoded
-    @POST("")
-    fun queryMaintenancePlan(
+    @POST("/video-comments/get-posts/top/75552647/0/0")
+    fun loadComment(
         @FieldMap map: Map<String, @JvmSuppressWildcards Any?>
     ): String
 }

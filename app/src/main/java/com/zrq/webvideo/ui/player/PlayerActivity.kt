@@ -1,29 +1,29 @@
-package com.zrq.webvideo.ui
+package com.zrq.webvideo.ui.player
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zrq.webvideo.adapter.DetailAdapter
+import com.zrq.webvideo.base.BaseVmActivity
 import com.zrq.webvideo.databinding.ActivityPlayerBinding
 import org.jsoup.Jsoup
 import xyz.doikki.videocontroller.StandardVideoController
 import java.util.regex.Pattern
 
-class PlayerActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mBinding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(mBinding.root)
-        initData()
-        initEvent()
-    }
+class PlayerActivity : BaseVmActivity<ActivityPlayerBinding, PlayerViewModel>() {
 
-    private lateinit var mBinding: ActivityPlayerBinding
     private lateinit var detailAdapter: DetailAdapter
 
     private var title = ""
@@ -34,7 +34,19 @@ class PlayerActivity : AppCompatActivity() {
     private var hls = ""
     private var isDestroy = false
 
-    private fun initData() {
+    override fun providedViewBinding(): ActivityPlayerBinding {
+        return ActivityPlayerBinding.inflate(layoutInflater)
+    }
+
+    override fun providedViewModel(): Class<PlayerViewModel> {
+        return PlayerViewModel::class.java
+    }
+
+    override fun initViewModel(): Context {
+        return this
+    }
+
+    override fun initData() {
         title = intent.getStringExtra("title") ?: ""
         path = intent.getStringExtra("path") ?: ""
         cover = intent.getStringExtra("cover") ?: ""
@@ -42,11 +54,25 @@ class PlayerActivity : AppCompatActivity() {
         val transition = intent.getStringExtra("transition") ?: ""
         detailAdapter = DetailAdapter(this)
 
-        mBinding.apply {
+        binding.apply {
             Glide.with(this@PlayerActivity)
                 .load(cover)
-                .into(ivCover)
-            ivCover.transitionName = transition
+                .addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        videoView.setPlayerBackground(resource)
+                        return false
+                    }
+                })
+                .into(object : SimpleTarget<Drawable>() {
+                    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                        videoView.setPlayerBackground(resource)
+                    }
+                })
+            videoView.transitionName = transition
             viewPager.offscreenPageLimit = 2
             viewPager.adapter = detailAdapter
             TabLayoutMediator(tabLayout, viewPager, true) { tab, position ->
@@ -56,8 +82,9 @@ class PlayerActivity : AppCompatActivity() {
         loadVideo()
     }
 
-    private fun initEvent() {
+    override fun initEvent() {
     }
+
 
     private fun loadVideo() {
         Thread {
@@ -96,9 +123,7 @@ class PlayerActivity : AppCompatActivity() {
             return
         }
         Handler(Looper.getMainLooper()).post {
-            mBinding.apply {
-                ivCover.visibility = View.GONE
-                videoView.visibility = View.VISIBLE
+            binding.apply {
                 videoView.setUrl(hls)
                 val controller = StandardVideoController(this@PlayerActivity)
                 controller.addDefaultControlComponent(title, false)
@@ -109,7 +134,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val back = !mBinding.videoView.onBackPressed()
+        val back = !binding.videoView.onBackPressed()
         if (back) {
             super.onBackPressed()
         }
@@ -118,18 +143,18 @@ class PlayerActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         isDestroy = false
-        mBinding.videoView.resume()
+        binding.videoView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mBinding.videoView.pause()
+        binding.videoView.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         isDestroy = true
-        mBinding.videoView.release()
+        binding.videoView.release()
     }
 
     companion object {
